@@ -390,7 +390,7 @@ func (c *Context) Apply() (*State, error) {
 			Module:    c.module,
 			Diff:      c.diff,
 			State:     c.state,
-			Providers: c.providersList(),
+			Providers: c.components.ResourceProviders(),
 		}).Build(RootModulePath)
 	} else {
 		newGraph, err = (&ApplyGraphBuilder{
@@ -430,6 +430,11 @@ func (c *Context) Apply() (*State, error) {
 		log.Printf("[WARN] terraform: real graph is experiment, shadow is experiment")
 		real = shadow
 	} else {
+		// TODO: remove before branch is done, we're just not ready for this yet
+		if c.destroy {
+			shadow = nil
+		}
+
 		log.Printf("[WARN] terraform: real graph is original, shadow is experiment")
 	}
 
